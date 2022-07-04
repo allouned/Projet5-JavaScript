@@ -3,7 +3,7 @@ const urlParams = new URLSearchParams(queryString);
 const id = urlParams.get("id");
 if (id != null) {
   let itemPrice = 0;
-  let imgUrl, altText;
+  let imgUrl, altText, articleName;
 }
 fetch(`http://localhost:3000/api/products/${id}`)
   .then((response) => response.json())
@@ -14,10 +14,11 @@ function handleData(canap) {
   itemPrice = price;
   imgUrl = imageUrl;
   altText = altTxt;
+  articleName = name;
   makeImage(imageUrl, altTxt);
   makeTitle(name);
   makePrice(price);
-  makeDescription(description);
+  makeCartContent(description);
   makeColors(colors);
 }
 
@@ -38,7 +39,7 @@ function makePrice(price) {
   if (span != null) span.textContent = price;
 }
 
-function makeDescription(description) {
+function makeCartContent(description) {
   const p = document.querySelector("#description");
   if (p != null) p.textContent = description;
 }
@@ -67,7 +68,7 @@ function handleClick() {
   }
 }
 
-function saveOrde(color, quantity) {
+function saveOrder(color, quantity) {
   const data = {
     id: id,
     color: color,
@@ -75,6 +76,7 @@ function saveOrde(color, quantity) {
     price: itemPrice,
     imageUrl: imgUrl,
     altTxt: altText,
+    name: articleName
   };
 
   localStorage.setItem(id, JSON.stringify(data));
