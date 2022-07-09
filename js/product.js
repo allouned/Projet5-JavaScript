@@ -69,6 +69,7 @@ function handleClick() {
 }
 
 function saveOrder(color, quantity) {
+  const key = `${id}-${color}`
   const data = {
     id: id,
     color: color,
@@ -79,7 +80,7 @@ function saveOrder(color, quantity) {
     name: articleName
   };
 
-  localStorage.setItem(id, JSON.stringify(data));
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
 function isOrderInvalid(color, quantity) {
