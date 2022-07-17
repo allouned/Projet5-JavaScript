@@ -1,10 +1,9 @@
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
+// Avec URLSearchParams.get() on a récupéré la valeur "id" 'parmi les autres paramètres pour chaque produit :
+const partieDroiteUrl = window.location.search;
+const urlParams = new URLSearchParams(partieDroiteUrl);
 const id = urlParams.get("id");
-if (id != null) {
-  let itemPrice = 0;
-  let imgUrl, altText, articleName;
-}
+
+// On utilise fetch() de la façon suivant pour récupérer les données en fonction du produit (donc son "id") :
 fetch(`http://localhost:3000/api/products/${id}`)
   .then((response) => response.json())
   .then((res) => handleData(res));
@@ -43,7 +42,7 @@ function makeCartContent(description) {
   const p = document.querySelector("#description");
   if (p != null) p.textContent = description;
 }
-
+// On a utilisé le loop "forEach" afin d'afficher les otpions de couleurs dans "select": 
 function makeColors(colors) {
   const select = document.querySelector("#colors");
   if (select != null) {
@@ -55,15 +54,29 @@ function makeColors(colors) {
     });
   }
 }
-const button = document.querySelector("#addToCart");
 
+// La méthode addEventListener sert à écouter le clique sur "Ajouter au panier" et exécuté la fn handleClick : 
+
+const button = document.querySelector("#addToCart");
 button.addEventListener("click", handleClick);
 function handleClick() {
   {
     const color = document.getElementById("colors").value;
     const quantity = document.getElementById("quantity").value;
     if (isOrderInvalid(color, quantity)) return;
-    saveOrder(color, quantity);
+
+// On a utilisé des "id" et des colors pour pouvoir récuprer le même produit avec deux couleurs différentes :
+// localStorage.getItem() récupère les données dans le local storage. 
+    const key = `${id}-${color}`
+    let item = localStorage.getItem(key)
+    if (item == null) {
+      saveOrder(color, quantity);
+    }
+    else {
+      let dataCart = JSON.parse(item)
+      let totalQuantity = Number(dataCart.quantity) + Number(quantity)
+      saveOrder(color, totalQuantity);
+    }
     redirectToCart();
   }
 }
@@ -74,12 +87,12 @@ function saveOrder(color, quantity) {
     id: id,
     color: color,
     quantity: Number(quantity),
-    price: itemPrice,
+    // price: itemPrice,
     imageUrl: imgUrl,
     altTxt: altText,
     name: articleName
   };
-
+  // On ajoute les données (quantité et couleur) à local storage avec localStorage.setItem :
   localStorage.setItem(key, JSON.stringify(data));
 }
 
@@ -91,7 +104,7 @@ function isOrderInvalid(color, quantity) {
     quantity == 0 ||
     quantity >= 100
   ) {
-    alert("Please selct a color and quantity between 1 and 100 items");
+    alert(" Veuillez choisir une couleur et une quantité entre 1 et 100 articles");
     return true;
   }
 }
